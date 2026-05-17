@@ -27,8 +27,8 @@ function parseQuery(text) {
 function deduplicateLeads(leads) {
   const seen = new Set();
   return leads.filter((lead) => {
-    // Primary key: phone number (if exists)
-    if (lead.phone) {
+    // Primary key: phone number (if exists and is valid)
+    if (lead.phone && lead.phone !== 'N/A') {
       const normalizedPhone = lead.phone.replace(/[\s\-\(\)]/g, '');
       if (seen.has(normalizedPhone)) return false;
       seen.add(normalizedPhone);
