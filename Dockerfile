@@ -25,7 +25,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 
 # Run as non-root user
 RUN addgroup -g 1001 -S appgroup && \
-    adduser -S appuser -u 1001 -G appgroup
+    adduser -S appuser -u 1001 -G appgroup && \
+    chown -R appuser:appgroup /app
 USER appuser
 
 CMD ["node", "src/index.js"]
