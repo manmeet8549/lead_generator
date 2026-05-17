@@ -1,0 +1,38 @@
+{
+  "name": "telegram-lead-gen-bot",
+  "version": "1.0.0",
+  "description": "AI-powered lead generation Telegram bot using Google Maps, NVIDIA NIM, and Google Sheets",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "lint": "eslint src/",
+    "test": "jest --passWithNoTests"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "lead-generation",
+    "google-maps",
+    "ai",
+    "nvidia-nim",
+    "apify"
+  ],
+  "author": "Manmeet Singh",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

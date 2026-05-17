@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: telegram-lead-gen-bot
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: APIFY_API_TOKEN
+        sync: false
+      - key: NVIDIA_NIM_API_KEY
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: MAX_LEADS_PER_SEARCH
+        value: 50
+      - key: AI_ENRICHMENT_ENABLED
+        value: "true"
+    disk:
+      name: lead-gen-data
+      mountPath: /app/data
+      sizeGB: 1
