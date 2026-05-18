@@ -50,6 +50,7 @@ function cleanLead(raw) {
     name: raw.title || raw.name || raw.searchString || 'N/A',
     phone: cleanPhone(raw.phone || raw.phoneUnformatted || ''),
     website: cleanWebsite(raw.website || raw.url || ''),
+    email: extractEmail(raw),
     address: raw.address || raw.street || 'N/A',
     rating: raw.totalScore ?? raw.rating ?? 'N/A',
     reviews: raw.reviewsCount ?? raw.reviews ?? 0,
@@ -60,6 +61,19 @@ function cleanLead(raw) {
     aiSummary: '',
     outreachMessage: '',
   };
+}
+
+/**
+ * Extract email string from raw lead if available.
+ */
+function extractEmail(raw) {
+  if (typeof raw.email === 'string' && raw.email.includes('@')) {
+    return raw.email;
+  }
+  if (Array.isArray(raw.emails) && raw.emails.length > 0) {
+    return raw.emails.join(', ');
+  }
+  return 'N/A';
 }
 
 /**

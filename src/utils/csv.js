@@ -27,6 +27,7 @@ async function exportToCsv(leads, filename) {
       { id: 'name', title: 'Name' },
       { id: 'phone', title: 'Phone' },
       { id: 'website', title: 'Website' },
+      { id: 'email', title: 'Email' },
       { id: 'address', title: 'Address' },
       { id: 'rating', title: 'Rating' },
       { id: 'reviews', title: 'Reviews' },
