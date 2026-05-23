@@ -22,25 +22,28 @@ async function initGoogleClients() {
     ],
   };
 
-  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+  const envJsonString = process.env.GOOGLE_SERVICE_ACCOUNT_JSON || 
+                        (process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE && process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE.trim().startsWith('{') ? process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE : null);
+
+  if (envJsonString) {
     try {
-      let credentialsJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON.trim();
-      // Auto-decode base64 if it's encoded
+      let credentialsJson = envJsonString.trim();
+      // Auto-decode base64 if it's encoded (though it shouldn't be if it starts with {)
       if (!credentialsJson.startsWith('{')) {
         credentialsJson = Buffer.from(credentialsJson, 'base64').toString('utf8');
       }
       authOptions.credentials = JSON.parse(credentialsJson);
-      logger.info('🔑 Loaded Google credentials from GOOGLE_SERVICE_ACCOUNT_JSON env var');
+      logger.info('🔑 Loaded Google credentials from environment variables directly');
     } catch (e) {
-      logger.error('❌ Failed to parse GOOGLE_SERVICE_ACCOUNT_JSON environment variable:', e);
-      throw new Error(`Invalid GOOGLE_SERVICE_ACCOUNT_JSON env variable format: ${e.message}`);
+      logger.error('❌ Failed to parse Google JSON credentials from environment variables:', e);
+      throw new Error(`Invalid Google credentials format in environment variables: ${e.message}`);
     }
   } else {
     const keyFilePath = config.google.keyFile;
     if (!fs.existsSync(keyFilePath)) {
       throw new Error(
         `Google credentials missing! Service account key file not found at "${keyFilePath}", ` +
-          'and "GOOGLE_SERVICE_ACCOUNT_JSON" environment variable is not defined.'
+          'and valid JSON credentials were not found in environment variables.'
       );
     }
     authOptions.keyFile = keyFilePath;

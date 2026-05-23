@@ -46,7 +46,10 @@ setInterval(() => {
 if (process.env.RENDER_EXTERNAL_URL) {
   setInterval(() => {
     logger.info('Self-pinging to keep Render instance awake...');
-    require('http').get(`${process.env.RENDER_EXTERNAL_URL}/health`).on('error', (err) => {
+    const url = `${process.env.RENDER_EXTERNAL_URL}/health`;
+    const httpModule = url.startsWith('https') ? require('https') : require('http');
+    
+    httpModule.get(url).on('error', (err) => {
       logger.error('Self-ping failed:', err.message);
     });
   }, 14 * 60 * 1000);
