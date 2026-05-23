@@ -3,22 +3,24 @@
 // ============================================
 
 /**
- * Parse "<niche> in <area>" from a message.
- * Returns { niche, area } or null if the pattern doesn't match.
+ * Parse "<count>, <niche>, <area>" from a message.
+ * Returns { count, niche, area } or null if the pattern doesn't match.
  */
 function parseQuery(text) {
   if (!text || typeof text !== 'string') return null;
 
   const cleaned = text.trim();
-  // Match: "dentists in delhi", "yoga studios in new york", etc.
-  const match = cleaned.match(/^(.+?)\s+in\s+(.+)$/i);
+  // Match: "50, dentists, delhi" or "100, yoga studios, new york"
+  // It allows optional spaces around commas, and an optional trailing period
+  const match = cleaned.match(/^(\d+)\s*,\s*(.+?)\s*,\s*(.+?)\.?$/i);
   if (!match) return null;
 
-  const niche = match[1].trim();
-  const area = match[2].trim();
+  const count = parseInt(match[1], 10);
+  const niche = match[2].trim();
+  const area = match[3].trim();
 
-  if (!niche || !area) return null;
-  return { niche, area };
+  if (!count || !niche || !area) return null;
+  return { count, niche, area };
 }
 
 /**
@@ -56,10 +58,6 @@ function cleanLead(raw) {
     reviews: raw.reviewsCount ?? raw.reviews ?? 0,
     category: raw.categoryName || raw.category || 'N/A',
     city: raw.city || raw.locality || '',
-    // Placeholders for AI enrichment
-    aiScore: '',
-    aiSummary: '',
-    outreachMessage: '',
   };
 }
 

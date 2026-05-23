@@ -101,9 +101,6 @@ async function saveToGoogleSheets(leads, title) {
     'Rating',
     'Reviews',
     'Category',
-    'AI Score',
-    'AI Summary',
-    'Outreach Message',
   ];
 
   const rows = leads.map((lead) => [
@@ -115,9 +112,6 @@ async function saveToGoogleSheets(leads, title) {
     lead.rating,
     lead.reviews,
     lead.category,
-    lead.aiScore,
-    lead.aiSummary,
-    lead.outreachMessage,
   ]);
 
   await sheetsClient.spreadsheets.values.update({

@@ -32,9 +32,6 @@ async function exportToCsv(leads, filename) {
       { id: 'rating', title: 'Rating' },
       { id: 'reviews', title: 'Reviews' },
       { id: 'category', title: 'Category' },
-      { id: 'aiScore', title: 'AI Score' },
-      { id: 'aiSummary', title: 'AI Summary' },
-      { id: 'outreachMessage', title: 'Outreach Message' },
     ],
   });
 

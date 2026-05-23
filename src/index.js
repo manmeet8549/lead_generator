@@ -42,6 +42,16 @@ setInterval(() => {
   }
 }, 60 * 60 * 1000);
 
+// ---- Keep-alive ping for Render Free Tier (every 14 mins) ----
+if (process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    logger.info('Self-pinging to keep Render instance awake...');
+    require('http').get(`${process.env.RENDER_EXTERNAL_URL}/health`).on('error', (err) => {
+      logger.error('Self-ping failed:', err.message);
+    });
+  }, 14 * 60 * 1000);
+}
+
 // ---- Graceful shutdown ----
 function shutdown(signal) {
   logger.info(`\n${signal} received. Shutting down gracefully...`);

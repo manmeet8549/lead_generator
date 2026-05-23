@@ -2,7 +2,7 @@
 // Lead Pipeline — orchestrates the full workflow
 // ============================================
 const { scrapeGoogleMaps } = require('../apify/scraper');
-const { enrichLeadsWithAI } = require('../ai/nvidia');
+// Removed AI Enrichment
 const { saveToGoogleSheets } = require('../google/sheets');
 const { exportToCsv } = require('../utils/csv');
 const { cleanLead, deduplicateLeads, formatLeadSummary } = require('../utils/helpers');
@@ -18,21 +18,22 @@ const logger = require('../utils/logger');
  * 5. Export CSV
  * 6. Return results
  *
+ * @param {number} count - number of leads to generate
  * @param {string} niche - business type (e.g. "dentists")
  * @param {string} area - location (e.g. "delhi")
  * @param {Function} onProgress - callback for progress updates
  * @returns {Promise<Object>} - { leads, sheetUrl, csvPath, summary }
  */
-async function runLeadPipeline(niche, area, onProgress = () => {}) {
+async function runLeadPipeline(count, niche, area, onProgress = () => {}) {
   const searchQuery = `${niche} in ${area}`;
   const startTime = Date.now();
 
   try {
     // ---- Step 1: History Check & Scrape ----
     const historyCount = getQueryHistoryCount(niche, area);
-    const targetResultsCount = historyCount + 50;
+    const targetResultsCount = historyCount + count;
     
-    await onProgress(`🔍 Searching Google Maps (looking for ${targetResultsCount} total places to extract 50 new ones)...`);
+    await onProgress(`🔍 Searching Google Maps (looking for ${targetResultsCount} total places to extract ${count} new ones)...`);
     const rawResults = await scrapeGoogleMaps(searchQuery, targetResultsCount);
 
     if (!rawResults || rawResults.length === 0) {
@@ -59,8 +60,8 @@ async function runLeadPipeline(niche, area, onProgress = () => {}) {
       logger.info(`✨ Filtered out ${duplicatesRemoved} previously scraped leads.`);
     }
 
-    // Slice to exactly 50 leads per message
-    leads = leads.slice(0, 50);
+    // Slice to exact target count per message
+    leads = leads.slice(0, count);
     logger.info(`Cleaned new leads: ${leads.length} (from ${rawResults.length} raw results)`);
 
     if (leads.length === 0) {
@@ -76,9 +77,7 @@ async function runLeadPipeline(niche, area, onProgress = () => {}) {
     // Save newly scraped leads to history so they won't be returned next time
     saveNewLeadsToHistory(niche, area, leads);
 
-    // ---- Step 3: AI Enrichment ----
-    await onProgress('🤖 Analyzing leads with AI...');
-    leads = await enrichLeadsWithAI(leads);
+    // (AI Enrichment Step Removed based on user request)
 
     // ---- Step 4: Save to Google Sheets ----
     let sheetUrl = null;

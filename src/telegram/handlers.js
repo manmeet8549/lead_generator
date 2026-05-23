@@ -26,10 +26,10 @@ function registerHandlers(bot) {
         `I find business leads from Google Maps and deliver them to your Google Sheet.\n\n` +
         `*How to use:*\n` +
         `Just send me a message like:\n\n` +
-        `\`dentists in delhi\`\n` +
-        `\`plumbers in mumbai\`\n` +
-        `\`gyms in london\`\n\n` +
-        `I'll scrape, clean, score with AI, and deliver a spreadsheet link! 📊`,
+        `\`50, dentists, delhi\`\n` +
+        `\`100, plumbers, mumbai\`\n` +
+        `\`20, gyms, london\`\n\n` +
+        `I'll scrape, clean, and deliver a spreadsheet link! 📊`,
       { parse_mode: 'Markdown' }
     );
   });
@@ -44,15 +44,14 @@ function registerHandlers(bot) {
         `• /help — This help text\n` +
         `• /status — Check if bot is online\n\n` +
         `*Usage:*\n` +
-        `Send \`<niche> in <area>\`\n\n` +
+        `Send \`<count>, <niche>, <area>\`\n\n` +
         `*Examples:*\n` +
-        `• \`dentists in delhi\`\n` +
-        `• \`yoga studios in bangalore\`\n` +
-        `• \`restaurants in new york\`\n\n` +
+        `• \`50, dentists, delhi\`\n` +
+        `• \`100, yoga studios, bangalore\`\n` +
+        `• \`20, restaurants, new york\`\n\n` +
         `*What you get:*\n` +
         `📊 Google Sheet with all leads\n` +
-        `📁 CSV file download\n` +
-        `🤖 AI quality scores & outreach messages`,
+        `📁 CSV file download`,
       { parse_mode: 'Markdown' }
     );
   });
@@ -85,13 +84,13 @@ function registerHandlers(bot) {
     if (!parsed) {
       bot.sendMessage(
         chatId,
-        `🤔 I didn't understand that.\n\nPlease use the format:\n\`<niche> in <area>\`\n\nExample: \`dentists in delhi\``,
+        `🤔 I didn't understand that.\n\nPlease use the format:\n\`<count>, <niche>, <area>\`\n\nExample: \`50, dentists, delhi\``,
         { parse_mode: 'Markdown' }
       );
       return;
     }
 
-    const { niche, area } = parsed;
+    const { count, niche, area } = parsed;
 
     // Check for duplicate in-flight request
     if (activeRequests.has(chatId)) {
@@ -110,8 +109,8 @@ function registerHandlers(bot) {
       const statusMsg = await bot.sendMessage(
         chatId,
         `🚀 *Generating leads...*\n\n` +
-          `🔎 Searching: *${niche}* in *${area}*\n\n` +
-          `This may take 2-5 minutes. I'll update you on progress!`,
+          `🔎 Searching: *${niche}* in *${area}* (Target: ${count} leads)\n\n` +
+          `This may take a few minutes. I'll update you on progress!`,
         { parse_mode: 'Markdown' }
       );
 
@@ -120,7 +119,7 @@ function registerHandlers(bot) {
         try {
           await bot.editMessageText(
             `🚀 *Generating leads...*\n\n` +
-              `🔎 *${niche}* in *${area}*\n\n` +
+              `🔎 *${niche}* in *${area}* (Target: ${count} leads)\n\n` +
               `${update}`,
             {
               chat_id: chatId,
@@ -134,7 +133,7 @@ function registerHandlers(bot) {
       };
 
       // ---- Run the pipeline ----
-      const result = await runLeadPipeline(niche, area, onProgress);
+      const result = await runLeadPipeline(count, niche, area, onProgress);
 
       if (result.error || result.leads.length === 0) {
         await bot.sendMessage(chatId, result.summary, { parse_mode: 'Markdown' });
