@@ -89,7 +89,7 @@ function cleanPhone(phone) {
 function cleanWebsite(url) {
   if (!url) return 'N/A';
   // Filter out invalid/placeholder URLs
-  const invalid = ['facebook.com', 'instagram.com', 'twitter.com', 'google.com/maps'];
+  const invalid = ['google.com/maps'];
   const lower = url.toLowerCase();
   if (invalid.some((domain) => lower.includes(domain))) return 'N/A';
   // Ensure protocol
